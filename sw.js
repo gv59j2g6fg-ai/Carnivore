@@ -1,4 +1,4 @@
-const CACHE = "carnivore-v9-20260201-143733-rminqg";
+const CACHE = "carnivore-v10-20260201-144330-jnrjp2";
 const ASSETS = [
   ./icon-512.png,
   ./icon-192.png,
