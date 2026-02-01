@@ -880,7 +880,7 @@ function renderDrinkRows() {
 
     tr.appendChild(wrapCell(sel));
     tr.appendChild(wrapCell(unit));
-    tr.appendChild(amountWrap);
+    tr.appendChild(wrapCell(amountWrap));
     tr.appendChild(kcal);
     tr.appendChild(carb);
     tr.appendChild(wrapCell(del));
