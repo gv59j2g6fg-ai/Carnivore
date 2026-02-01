@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#0b0f14" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="Carnivore" />
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="apple-touch-icon-180x180.png" />
+  <link rel="icon" href="icon-192.png" />
+  <title>Carnivore Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">C</div>
+      <div>
+        <div class="title">Carnivore Tracker</div>
+        <div class="subtitle" id="todayLabel"></div>
+      </div>
+    </div>
+    <button class="btn ghost" id="installBtn" hidden>Install</button>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="row">
+        <div class="field">
+          <label for="nameInput">Name</label>
+          <input id="nameInput" type="text" placeholder="Your name" />
+        </div>
+        <div class="field">
+          <label for="weightInput">Weight (kg)</label>
+          <input id="weightInput" type="number" inputmode="decimal" min="30" max="250" step="0.1" placeholder="e.g. 96.0" />
+        </div>
+        <div class="field">
+          <label for="proteinTarget">Protein target (g)</label>
+          <input id="proteinTarget" type="number" inputmode="numeric" min="50" max="350" step="1" />
+        </div>
+      </div>
+      <div class="hint">Protein target auto-calculates as <b>2.0 g per kg</b> unless you override it.</div>
+      <div class="row end">
+        <button class="btn" id="saveProfileBtn">Save</button>
+        <button class="btn ghost" id="resetTodayBtn" title="Clear today's logs">Reset today</button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <section class="card">
+        <h2>Today's totals</h2>
+        <div class="kpis">
+          <div class="kpi">
+            <div class="kpiLabel">Protein</div>
+            <div class="kpiValue"><span id="proteinTotal">0</span> g</div>
+            <div class="kpiSub">Target: <span id="proteinTargetLabel">0</span> g</div>
+          </div>
+          <div class="kpi">
+            <div class="kpiLabel">Alcohol</div>
+            <div class="kpiValue"><span id="drinkUnitsTotal">0</span> units</div>
+            <div class="kpiSub">Daily reset</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Quick add</h2>
+        <div class="row">
+          <div class="field">
+            <label for="foodSelect">Food</label>
+            <select id="foodSelect"></select>
+          </div>
+          <div class="field">
+            <label for="foodQty">Qty</label>
+            <input id="foodQty" type="number" inputmode="numeric" min="1" max="9999" step="1" value="200" />
+            <div class="mini">grams</div>
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn" id="addFoodBtn">Add food</button>
+          <button class="btn ghost" id="manageFoodsBtn">Manage foods</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <div class="field">
+            <label for="drinkName">Drink</label>
+            <input id="drinkName" type="text" placeholder="e.g. Beer, Whisky" />
+          </div>
+          <div class="field">
+            <label for="drinkUnits">Units</label>
+            <input id="drinkUnits" type="number" inputmode="decimal" min="0" max="50" step="0.1" value="1" />
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn" id="addDrinkBtn">Add drink</button>
+        </div>
+      </section>
+    </section>
+
+    <section class="card">
+      <h2>Today's log</h2>
+      <div class="tableWrap">
+        <table class="table" id="logTable">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Type</th>
+              <th>Item</th>
+              <th class="right">Amount</th>
+              <th class="right">Protein (g)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="logBody"></tbody>
+        </table>
+      </div>
+      <div class="hint">All data stays on this device (localStorage). Add to Home Screen for an app-like experience.</div>
+    </section>
+
+    <section class="card" id="foodsModal" aria-hidden="true">
+      <div class="modalHeader">
+        <h2>Manage foods</h2>
+        <button class="btn ghost" id="closeFoodsBtn">Close</button>
+      </div>
+      <div class="hint">Protein values are per 100g. Your historical logs keep their original item names.</div>
+      <div class="row">
+        <div class="field">
+          <label for="newFoodName">Food name</label>
+          <input id="newFoodName" type="text" placeholder="e.g. Ribeye" />
+        </div>
+        <div class="field">
+          <label for="newFoodProtein">Protein per 100g</label>
+          <input id="newFoodProtein" type="number" inputmode="decimal" min="0" max="60" step="0.1" placeholder="e.g. 24.0" />
+        </div>
+      </div>
+      <div class="row end">
+        <button class="btn" id="addFoodDefBtn">Add food</button>
+      </div>
+      <div class="divider"></div>
+      <div id="foodsList"></div>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    <span id="statusText">Ready</span>
+  </footer>
+</body>
+</html>
