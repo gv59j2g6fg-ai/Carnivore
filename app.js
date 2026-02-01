@@ -33,32 +33,6 @@ function todayISO() {
   return local.toISOString().slice(0, 10);
 }
 
-const DRINK_UNITS = [
-  { key: "ml", label: "mL", mlPer: 1 },
-  { key: "schooner", label: "Schooner (425mL)", mlPer: 425 },
-  { key: "bottle", label: "Bottle (375mL)", mlPer: 375 }
-];
-
-function drinkMlFromRow(r) {
-  // Backward compatible: legacy rows used r.ml
-  if (r && typeof r.ml !== "undefined" && typeof r.amount === "undefined") {
-    return Number(r.ml) || 0;
-  }
-  const unitKey = (r && r.unit) ? r.unit : "ml";
-  const amt = Number(r && r.amount) || 0;
-  const u = DRINK_UNITS.find(x => x.key === unitKey) || DRINK_UNITS[0];
-  return amt * (u.mlPer || 1);
-}
-
-function normalizeDrinkRow(r) {
-  if (!r) return { drink: "", unit: "ml", amount: 0 };
-  if (typeof r.amount === "undefined" && typeof r.ml !== "undefined") {
-    return { drink: r.drink || "", unit: "ml", amount: Number(r.ml) || 0 };
-  }
-  return { drink: r.drink || "", unit: (r.unit || "ml"), amount: Number(r.amount) || 0 };
-}
-
-
 function loadJSON(key, fallback) {
   try {
     const v = localStorage.getItem(key);
@@ -119,16 +93,6 @@ let dayDraft = loadJSON(LS.DAY_DRAFT, null) || {
   foodRows: [],
   drinkRows: []
 };
-
-// Open each new day as CLEAN (no yesterday rows)
-if (!dayDraft.date || dayDraft.date !== todayISO()) {
-  dayDraft = { date: todayISO(), foodRows: [], drinkRows: [] };
-  saveJSON(LS.DAY_DRAFT, dayDraft);
-} else {
-  // migrate legacy drink rows
-  dayDraft.drinkRows = (dayDraft.drinkRows || []).map(normalizeDrinkRow);
-}
-
 
 let history = loadJSON(LS.HISTORY, null) || {}; // keyed by date
 
@@ -719,10 +683,9 @@ function addFoodRow() {
 }
 
 function addDrinkRow() {
-  dayDraft.drinkRows.push({ drink: drinks[0]?.name || "", unit: "ml", amount: 0 });
-  renderDrinkRows();
+  dayDraft.drinkRows.push({ drink: drinks[0]?.name || "", ml: 0 });
+  renderDrinkRows();       // safe (button click)
   persistDraft();
-  updateRowOutputs();
   recalcTotals();
 }
 
@@ -786,37 +749,28 @@ function renderDrinkRows() {
   const wrap = $("drinkRows");
   wrap.innerHTML = "";
 
-  dayDraft.drinkRows = (dayDraft.drinkRows || []).map(normalizeDrinkRow);
-
   dayDraft.drinkRows.forEach((row, idx) => {
     const tr = document.createElement("div");
     tr.className = "trow";
-    tr.style.gridTemplateColumns = "1.6fr .9fr .9fr .7fr .7fr .35fr";
+    tr.style.gridTemplateColumns = "1.6fr .9fr .7fr .7fr .35fr";
 
     const sel = document.createElement("select");
     sel.dataset.kind = "drink";
     sel.dataset.idx = String(idx);
     fillDrinkSelect(sel, row.drink);
 
-    const unit = document.createElement("select");
-    unit.dataset.kind = "unit";
-    unit.dataset.idx = String(idx);
-    DRINK_UNITS.forEach(u => {
-      const opt = document.createElement("option");
-      opt.value = u.key;
-      opt.textContent = u.label;
-      unit.appendChild(opt);
-    });
-    unit.value = row.unit || "ml";
+    const ml = document.createElement("input");
+    ml.type = "number";
+    ml.inputMode = "decimal";
+    ml.step = "10";
+    ml.placeholder = "mL";
+    ml.value = row.ml ? String(row.ml) : "";
+    ml.dataset.kind = "ml";
+    ml.dataset.idx = String(idx);
 
-    const amt = document.createElement("input");
-    amt.type = "number";
-    amt.inputMode = "decimal";
-    amt.step = unit.value === "ml" ? "10" : "0.5";
-    amt.placeholder = unit.value === "ml" ? "mL" : "Qty";
-    amt.value = row.amount ? String(row.amount) : "";
-    amt.dataset.kind = "amount";
-    amt.dataset.idx = String(idx);
+    ml.addEventListener("change", onDrinkRowChanged);
+    ml.addEventListener("blur", onDrinkRowChanged);
+    sel.addEventListener("change", onDrinkRowChanged);
 
     const kcal = document.createElement("div"); kcal.className = "cell right"; kcal.id = `dk_${idx}`;
     const c = document.createElement("div"); c.className = "cell right"; c.id = `dc_${idx}`;
@@ -829,23 +783,11 @@ function renderDrinkRows() {
       dayDraft.drinkRows.splice(idx, 1);
       renderDrinkRows();
       persistDraft();
-      updateRowOutputs();
       recalcTotals();
     });
 
-    const syncAmtUI = () => {
-      amt.step = unit.value === "ml" ? "10" : "0.5";
-      amt.placeholder = unit.value === "ml" ? "mL" : "Qty";
-    };
-
-    sel.addEventListener("change", onDrinkRowChanged);
-    unit.addEventListener("change", () => { syncAmtUI(); onDrinkRowChanged({ target: unit }); });
-    amt.addEventListener("change", onDrinkRowChanged);
-    amt.addEventListener("blur", onDrinkRowChanged);
-
     tr.appendChild(wrapCell(sel));
-    tr.appendChild(wrapCell(unit));
-    tr.appendChild(wrapCell(amt));
+    tr.appendChild(wrapCell(ml));
     tr.appendChild(kcal);
     tr.appendChild(c);
     tr.appendChild(wrapCell(del));
@@ -855,7 +797,6 @@ function renderDrinkRows() {
 
   updateRowOutputs();
 }
-
 
 function wrapCell(el) {
   const d = document.createElement("div");
@@ -934,12 +875,10 @@ function onDrinkRowChanged(e) {
 
   const tr = e.target.closest(".trow");
   const sel = tr.querySelector('select[data-kind="drink"]');
-  const unit = tr.querySelector('select[data-kind="unit"]');
-  const amt = tr.querySelector('input[data-kind="amount"]');
+  const ml = tr.querySelector('input[data-kind="ml"]');
 
   row.drink = sel?.value || "";
-  row.unit = unit?.value || "ml";
-  row.amount = Number(amt?.value) || 0;
+  row.ml = Number(ml?.value) || 0;
 
   persistDraft();
   updateRowOutputs();
@@ -966,7 +905,7 @@ function updateRowOutputs() {
 
   dayDraft.drinkRows.forEach((r, i) => {
     const d = drinks.find(x => x.name === r.drink);
-    const ml = drinkMlFromRow(r);
+    const ml = Number(r.ml) || 0;
     const mult = ml / 100;
 
     const kcal = d ? d.kcal * mult : 0;
@@ -1000,7 +939,7 @@ function computeSumsForDay(day) {
 
   (day.drinkRows || []).forEach(r => {
     const d = drinks.find(x => x.name === r.drink);
-    const ml = drinkMlFromRow(r);
+    const ml = Number(r.ml) || 0;
     const mult = ml / 100;
     if (!d) return;
     sums.alcKcal += d.kcal * mult;

@@ -88,10 +88,12 @@ input:focus,select:focus{border-color:rgba(42,140,255,.6)}
   gap:0;
   align-items:center;
 }
-#drinkRows .trow,
-#drinkRows.trow{grid-template-columns: 1.6fr .9fr .7fr .7fr .35fr}
-#drinkRows .trow{grid-template-columns: 1.6fr .9fr .7fr .7fr .35fr}
 
+/* Drinks table: 6 columns (Drink | Unit | Amount | kcal | Carbs | delete) */
+.table.drinks .thead,
+.table.drinks .trow{
+  grid-template-columns: 1.6fr .9fr .9fr .7fr .7fr .35fr;
+}
 .thead{
   background:#0b1320;
   color:var(--muted);
