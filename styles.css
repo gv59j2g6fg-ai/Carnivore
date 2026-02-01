@@ -247,31 +247,6 @@ input[type="number"]::-webkit-outer-spin-button{
 }
 
 /* Amount control: keep it inside its column and stop it pushing kcal/carbs */
-.amountCtl{
-  width: 100%;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.amountCtl .stepBtn{
-  width:32px;
-  height:32px;
-  border-radius:10px;
-  border:1px solid rgba(34,50,71,.9);
-  background:rgba(12,20,29,.75);
-  color:#fff;
-  font-weight:900;
-  line-height:1;
-  display:grid;
-  place-items:center;
-  flex: 0 0 auto;
-}
-.amountCtl input{
-  flex: 1 1 auto;
-  min-width: 0;           /* critical: prevents overflow */
-  text-align:center;
-  font-variant-numeric: tabular-nums;
-}
 
 /* Numeric cells */
 #drinkRows .cell.right{
@@ -285,23 +260,55 @@ input[type="number"]::-webkit-outer-spin-button{
 .build{color:#8aa0b8;font-size:12px;margin-top:6px;}
 
 
-/* === DRINKS V7: header has 6 cols incl delete, CSS controls alignment (Build: v7-20260201-142226-pb3ec1) === */
-.table.drinks .thead,
-#drinkRows .trow{
-  grid-template-columns: minmax(180px, 1.45fr) minmax(140px, .95fr) minmax(230px, 1.35fr) 96px 110px 54px;
+
+
+
+
+/* === FOOD + DRINKS V9: add delete column header cell + align grids (Build: v9-20260201-143733-rminqg) === */
+
+/* Food table (7 cols incl delete) */
+.table.food .thead,
+#foodRows .trow{
+  grid-template-columns: minmax(200px, 1.7fr) minmax(140px, 1fr) 96px 84px 84px 84px 54px;
   column-gap: 14px;
 }
 
-/* Header: right align numeric columns to match values */
-.table.drinks .thead > div:nth-child(4),
-.table.drinks .thead > div:nth-child(5){
-  text-align: right;
-  padding-right: 10px;
+/* Right-align numeric headers in food */
+.table.food .thead > div:nth-child(3),
+.table.food .thead > div:nth-child(4),
+.table.food .thead > div:nth-child(5),
+.table.food .thead > div:nth-child(6){
+  text-align:right;
+  padding-right:10px;
 }
 
-/* Values */
+/* Drinks table (6 cols incl delete) */
+.table.drinks .thead,
+#drinkRows .trow{
+  grid-template-columns: minmax(180px, 1.45fr) minmax(140px, .95fr) minmax(160px, 1.05fr) 96px 110px 54px;
+  column-gap: 14px;
+}
+
+.table.drinks .thead > div:nth-child(4),
+.table.drinks .thead > div:nth-child(5){
+  text-align:right;
+  padding-right:10px;
+}
+
+/* Numeric cells */
+#foodRows .cell.right,
 #drinkRows .cell.right{
   text-align:right;
   padding-right:10px;
   font-variant-numeric: tabular-nums;
+}
+
+/* iOS spinner visibility (best effort) */
+input[type="number"]{
+  color-scheme: dark;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button{
+  filter: invert(1);
+  opacity: .9;
 }

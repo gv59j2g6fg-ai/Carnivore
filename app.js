@@ -790,7 +790,9 @@ function renderDrinkRows() {
 
   dayDraft.drinkRows.forEach((row, idx) => {
     const tr = document.createElement("div");
-    tr.className = "trow";    const sel = document.createElement("select");
+    tr.className = "trow";
+
+    const sel = document.createElement("select");
     sel.dataset.kind = "drink";
     sel.dataset.idx = String(idx);
     fillDrinkSelect(sel, row.drink);
@@ -806,31 +808,16 @@ function renderDrinkRows() {
     });
     unit.value = row.unit || "ml";
 
-    // Custom amount control (no iOS black spinner)
-    const amountWrap = document.createElement("div");
-    amountWrap.className = "amountCtl";
-
-    const minus = document.createElement("button");
-    minus.type = "button";
-    minus.className = "stepBtn";
-    minus.textContent = "−";
-
+    // Single amount input (same style as Food amount)
     const amt = document.createElement("input");
-    amt.type = "text";
+    amt.type = "number";
     amt.inputMode = "decimal";
+    amt.step = "1";
+    amt.min = "0";
     amt.placeholder = unit.value === "ml" ? "mL" : "Qty";
-    amt.value = row.amount ? String(row.amount) : "";
+    amt.value = (row.amount ?? "") !== "" ? String(row.amount) : "";
     amt.dataset.kind = "amount";
     amt.dataset.idx = String(idx);
-
-    const plus = document.createElement("button");
-    plus.type = "button";
-    plus.className = "stepBtn";
-    plus.textContent = "+";
-
-    amountWrap.appendChild(minus);
-    amountWrap.appendChild(amt);
-    amountWrap.appendChild(plus);
 
     const kcal = document.createElement("div");
     kcal.className = "cell right";
@@ -851,33 +838,18 @@ function renderDrinkRows() {
       recalcTotals();
     });
 
-    const stepForUnit = () => {
-      // User request: step 1 always (even for mL); adjust here if you want mL=10
-      return 1;
-    };
-
-    const bump = (dir) => {
-      const step = stepForUnit();
-      const cur = Number(amt.value) || 0;
-      const next = Math.max(0, cur + (dir * step));
-      amt.value = String(next);
-      onDrinkRowChanged({ target: amt });
-    };
-
-    minus.addEventListener("click", () => bump(-1));
-    plus.addEventListener("click", () => bump(1));
-
     sel.addEventListener("change", onDrinkRowChanged);
     unit.addEventListener("change", () => {
       amt.placeholder = unit.value === "ml" ? "mL" : "Qty";
       onDrinkRowChanged({ target: unit });
     });
+    amt.addEventListener("input", onDrinkRowChanged);
     amt.addEventListener("change", onDrinkRowChanged);
     amt.addEventListener("blur", onDrinkRowChanged);
 
     tr.appendChild(wrapCell(sel));
     tr.appendChild(wrapCell(unit));
-    tr.appendChild(wrapCell(amountWrap));
+    tr.appendChild(wrapCell(amt));
     tr.appendChild(wrapCell(kcal));
     tr.appendChild(wrapCell(carb));
     tr.appendChild(wrapCell(del));
@@ -887,6 +859,7 @@ function renderDrinkRows() {
 
   updateRowOutputs();
 }
+
 
 
 
