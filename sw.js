@@ -1,14 +1,14 @@
-const CACHE = "carnivore-v10-20260201-144330-jnrjp2";
+const CACHE = "carnivore-v11-20260201-145510";
 const ASSETS = [
-  ./icon-512.png,
-  ./icon-192.png,
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
   "./manifest.webmanifest",
   "./apple-touch-icon.png",
-  "./apple-touch-icon-180x180.png"
+  "./apple-touch-icon-180x180.png",
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
 self.addEventListener("install", (e) => {
