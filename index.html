@@ -1,51 +1,195 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="theme-color" content="#0b0f14"/>
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-  <meta name="apple-mobile-web-app-title" content="Carnivore"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#0b0f14" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="Carnivore" />
 
-  <link rel="manifest" href="manifest.webmanifest"/>
-  <link rel="apple-touch-icon" href="apple-touch-icon-180x180.png"/>
-  <link rel="stylesheet" href="styles.css"/>
-  <script defer src="app.js"></script>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
 
+  <link rel="manifest" href="manifest.webmanifest" />
   <title>Carnivore Tracker</title>
+
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
 </head>
+
 <body>
-
-<header class="top">
-  <h1>Carnivore Tracker</h1>
-</header>
-
-<section class="card">
-  <h2>Alcohol (optional)</h2>
-  <p class="sub">
-    Tracked separately (does not change protein/fat targets).
-    Choose unit (mL / Schooner / Bottle).
-  </p>
-
-  <div class="table drinks">
-    <div class="thead">
-      <div>Drink</div>
-      <div>Unit</div>
-      <div>Amount</div>
-      <div>kcal</div>
-      <div>Carbs (g)</div>
-      <div></div>
+  <header class="topbar">
+    <div>
+      <h1>Carnivore Tracker</h1>
+      <div class="sub">Foods + Alcohol tracked separately. Saved locally on this device.</div>
     </div>
+    <div class="pill" id="offlinePill">Offline-ready</div>
+  </header>
 
-    <div id="drinkRows"></div>
-  </div>
+  <main class="grid">
+    <!-- LEFT -->
+    <section class="card">
+      <div class="row between">
+        <div>
+          <div class="label">Date</div>
+          <input id="date" type="date" />
+        </div>
+        <button id="saveDay" class="btn primary">💾 Save this day</button>
+      </div>
 
-  <div class="actions">
-    <button id="addDrink">+ Add drink</button>
-    <button id="clearDrink" class="danger">Clear drinks</button>
-  </div>
-</section>
+      <div class="row gap">
+        <button id="showWeekly" class="btn">📊 Weekly report</button>
+        <button id="clearRows" class="btn danger">Clear rows</button>
+      </div>
 
+      <div class="row gap between"><h2>Food log</h2><button id="jumpFoodManage" class="btn">✏️ Edit foods</button></div>
+      <div class="table">
+        <div class="thead">
+          <div>Food</div><div>Amount (g)</div><div>kcal</div><div>P</div><div>F</div><div>C</div><div></div>
+        </div>
+        <div id="foodRows" class="tbody"></div>
+      </div>
+      <button id="addFoodRow" class="btn wide">+ Add row</button>
+
+      <div class="row gap between"><h2>Alcohol (optional)</h2><button id="jumpDrinkManage" class="btn">✏️ Edit drinks</button></div>
+      <div class="muted">Tracked separately (does not change protein/fat targets). Choose unit (mL / Schooner / Bottle).</div>
+
+      <div class="table">
+        <div class="thead">
+          <div>Drink</div><div>Unit</div><div>Amount</div><div>kcal</div><div>Carbs (g)</div><div></div></div>
+        <div id="drinkRows" class="tbody"></div>
+      </div>
+
+      <div class="row gap">
+        <button id="addDrinkRow" class="btn wide">+ Add drink</button>
+        <button id="clearDrinks" class="btn danger wide">Clear drinks</button>
+      </div>
+
+      <h2>Totals</h2>
+      <div class="kpis">
+        <div class="kpi"><div class="k">Food kcal</div><div id="tFoodKcal" class="v">0</div></div>
+        <div class="kpi"><div class="k">Protein (g)</div><div id="tP" class="v">0</div></div>
+        <div class="kpi"><div class="k">Fat (g)</div><div id="tF" class="v">0</div></div>
+        <div class="kpi"><div class="k">Carbs (g)</div><div id="tC" class="v">0</div></div>
+        <div class="kpi"><div class="k">Alcohol kcal</div><div id="tAlcKcal" class="v">0</div></div>
+        <div class="kpi"><div class="k">Alcohol carbs (g)</div><div id="tAlcC" class="v">0</div></div>
+      </div>
+
+      <h2>Progress</h2>
+      <div class="bars">
+        <div class="bar">
+          <div class="barhead"><span>Calories</span><span id="pCalTxt">0%</span></div>
+          <div class="track"><div id="pCal" class="fill"></div></div>
+        </div>
+        <div class="bar">
+          <div class="barhead"><span>Protein</span><span id="pPTxt">0%</span></div>
+          <div class="track"><div id="pP" class="fill"></div></div>
+        </div>
+        <div class="bar">
+          <div class="barhead"><span>Fat</span><span id="pFTxt">0%</span></div>
+          <div class="track"><div id="pF" class="fill"></div></div>
+        </div>
+        <div class="bar">
+          <div class="barhead"><span>Carbs</span><span id="pCTxt">0%</span></div>
+          <div class="track"><div id="pC" class="fill"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <aside class="card">
+      <h2>Targets + History</h2>
+      <div class="muted">
+        Protein defaults to 2.0 g/kg. Fat auto-fills from calories after protein + carbs.
+        Alcohol never changes protein/fat targets.
+      </div>
+
+      <div class="row gap">
+        <div class="grow">
+          <div class="label">Body weight</div>
+          <input id="bw" type="number" inputmode="decimal" step="0.1" />
+        </div>
+        <div class="grow">
+          <div class="label">Unit</div>
+          <select id="bwUnit">
+            <option value="kg" selected>kg</option>
+            <option value="lb">lb</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row gap">
+        <div class="grow">
+          <div class="label">Protein (g/kg)</div>
+          <input id="pgkg" type="number" inputmode="decimal" step="0.1" />
+        </div>
+        <div class="grow">
+          <div class="label">Target calories (kcal)</div>
+          <input id="tcal" type="number" inputmode="numeric" />
+        </div>
+      </div>
+
+      <div class="row gap">
+        <div class="grow">
+          <div class="label">Target carbs (g)</div>
+          <input id="tcarb" type="number" inputmode="numeric" />
+        </div>
+      </div>
+
+      <div class="row gap">
+        <button id="saveTargets" class="btn primary grow">Save targets</button>
+        <button id="resetTargets" class="btn danger grow">Reset</button>
+      </div>
+
+      <div class="targetsBox">
+        <div class="small">Computed targets</div>
+        <div class="tline"><span>Target kcal:</span><b id="ctKcal">0</b></div>
+        <div class="tline"><span>Target Protein (g):</span><b id="ctP">0</b></div>
+        <div class="tline"><span>Target Fat (g):</span><b id="ctF">0</b></div>
+        <div class="tline"><span>Target Carbs (g):</span><b id="ctC">0</b></div>
+      </div>
+
+      <h2>History (load / delete)</h2>
+      <div class="muted">Saved days are stored on this device only.</div>
+      <div class="row gap">
+        <button id="exportJson" class="btn wide">Export JSON</button>
+        <button id="importJson" class="btn wide">Import JSON</button>
+        <input id="importFile" type="file" accept="application/json" style="display:none" />
+      </div>
+
+      <div id="historyList" class="history"></div>
+
+      <h2>Food list (edit)</h2>
+      <div class="muted">Add, delete, or Edit foods in the dropdown list. Values are per 100g. Saved locally.</div>
+
+      <div class="stack">
+        <input id="newFoodName" placeholder="Food name" />
+        <input id="newFoodKcal" type="number" inputmode="numeric" placeholder="kcal/100g" />
+        <input id="newFoodP" type="number" inputmode="decimal" placeholder="P/100g" />
+        <input id="newFoodF" type="number" inputmode="decimal" placeholder="F/100g" />
+        <input id="newFoodC" type="number" inputmode="decimal" placeholder="C/100g" />
+        <button id="addFoodBtn" class="btn primary">Add food</button>
+        <button id="resetFoods" class="btn danger">Reset foods</button>
+      </div>
+
+      <div id="foodListManage" class="list"></div>
+
+      <h2>Drink list (edit)</h2>
+      <div class="muted">Values are per 100mL (approx). Tap Edit to change a drink (name or macros).</div>
+
+      <div class="stack">
+        <input id="newDrinkName" placeholder="Drink name" />
+        <input id="newDrinkKcal" type="number" inputmode="decimal" placeholder="kcal/100mL" />
+        <input id="newDrinkC" type="number" inputmode="decimal" placeholder="carbs/100mL" />
+        <button id="addDrinkBtn" class="btn primary">Add drink</button>
+        <button id="resetDrinks" class="btn danger">Reset drinks</button>
+      </div>
+
+      <div id="drinkListManage" class="list"></div>
+
+      <div class="footerNote" id="installHint"></div>
+    </aside>
+  </main>
 </body>
 </html>

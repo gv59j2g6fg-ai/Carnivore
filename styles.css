@@ -1,81 +1,208 @@
-
-body{
-  background:#0b0f14;
-  color:#fff;
-  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto;
-  margin:0;
+:root{
+  --bg:#0b0f14;
+  --card:#0f1722;
+  --muted:#97a3b3;
+  --text:#e8eef7;
+  --line:#1b2635;
+  --btn:#162234;
+  --btn2:#1a2b42;
+  --danger:#3a1b1b;
+  --good:#15321c;
+  --accent:#2a8cff;
 }
-.top{padding:20px;font-size:22px;font-weight:800}
-.card{background:#111a25;margin:20px;border-radius:18px;padding:20px}
 
-.sub{color:#9bb0c7;font-size:14px}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial}
+h1,h2{margin:0 0 8px 0}
+h1{font-size:20px}
+h2{font-size:16px;margin-top:18px}
+.sub,.muted{color:var(--muted);font-size:12px;line-height:1.35}
+.small{color:var(--muted);font-size:11px;margin-bottom:8px}
 
-.table{margin-top:16px}
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 14px;border-bottom:1px solid var(--line);
+  position:sticky;top:0;background:rgba(11,15,20,.92);backdrop-filter: blur(8px);
+}
+
+.pill{
+  font-size:12px;padding:6px 10px;border-radius:999px;background:var(--good);border:1px solid rgba(255,255,255,.08);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: 1.25fr .9fr;
+  gap:12px;
+  padding:12px;
+}
+
+@media (max-width: 980px){
+  .grid{grid-template-columns:1fr}
+}
+
+.card{
+  background:var(--card);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+  padding:12px;
+}
+
+.row{display:flex;align-items:end}
+.between{justify-content:space-between}
+.gap{gap:10px}
+.grow{flex:1}
+.stack{display:grid;gap:8px;margin-top:10px}
+
+.label{font-size:11px;color:var(--muted);margin-bottom:6px}
+
+input,select{
+  width:100%;
+  background:#0b1320;
+  color:var(--text);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;
+  padding:10px 10px;
+  font-size:14px;
+  outline:none;
+}
+input:focus,select:focus{border-color:rgba(42,140,255,.6)}
+
+.btn{
+  background:var(--btn);
+  color:var(--text);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  padding:10px 12px;
+  font-size:14px;
+  cursor:pointer;
+}
+.btn:hover{background:var(--btn2)}
+.btn.primary{background:rgba(42,140,255,.18);border-color:rgba(42,140,255,.35)}
+.btn.danger{background:rgba(255,80,80,.12);border-color:rgba(255,80,80,.25)}
+.btn.wide{width:100%}
+
+.table{margin-top:8px;border:1px solid rgba(255,255,255,.06);border-radius:12px;overflow:hidden}
 .thead,.trow{
   display:grid;
+  grid-template-columns: 1.6fr .9fr .6fr .45fr .45fr .45fr .35fr;
+  gap:0;
   align-items:center;
-  gap:10px;
 }
-
-.table.drinks .thead,
-#drinkRows .trow{
-  grid-template-columns:
-    1.5fr
-    0.9fr
-    1.1fr
-    0.7fr
-    0.7fr
-    0.35fr;
-}
-
 .thead{
-  color:#9bb0c7;
-  font-size:13px;
-  padding-bottom:10px;
-  border-bottom:1px solid #223247;
+  background:#0b1320;
+  color:var(--muted);
+  font-size:12px;
+  padding:8px 10px;
+  border-bottom:1px solid rgba(255,255,255,.06);
 }
-
+.tbody{padding:8px}
 .trow{
-  padding:12px 0;
-  border-bottom:1px solid #223247;
+  padding:6px 0;
+  border-bottom:1px dashed rgba(255,255,255,.06);
+}
+.trow:last-child{border-bottom:none}
+.cell{padding:0 6px}
+.cell.right{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+
+.iconBtn{
+  width:36px;height:36px;border-radius:12px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+}
+.iconBtn:hover{background:rgba(255,255,255,.09)}
+
+.kpis{
+  margin-top:10px;
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:8px;
+}
+@media(max-width:980px){ .kpis{grid-template-columns: repeat(2, 1fr);} }
+
+.kpi{
+  background:#0b1320;border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;padding:10px;
+}
+.kpi .k{color:var(--muted);font-size:11px;margin-bottom:6px}
+.kpi .v{font-size:18px;font-variant-numeric:tabular-nums}
+
+.bars{margin-top:10px;display:grid;gap:10px}
+.barhead{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-bottom:6px}
+.track{height:10px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+.fill{height:100%;width:0%;background:rgba(42,140,255,.9)}
+
+.targetsBox{
+  margin-top:10px;
+  background:#0b1320;border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;padding:10px;
+}
+.tline{display:flex;justify-content:space-between;margin-top:6px;color:var(--muted)}
+.tline b{color:var(--text)}
+
+.history{margin-top:10px;display:grid;gap:8px}
+.hitem{
+  display:flex;justify-content:space-between;align-items:center;
+  background:#0b1320;border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;padding:10px;gap:10px;
+}
+.hitem .meta{display:flex;flex-direction:column;gap:3px}
+.hitem .meta .d{font-size:13px}
+.hitem .meta .s{font-size:11px;color:var(--muted)}
+.hactions{display:flex;gap:8px}
+
+.list{margin-top:10px;display:grid;gap:8px}
+.litem{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  background:#0b1320;border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;padding:10px;
+}
+.footerNote{margin-top:14px;color:var(--muted);font-size:12px}
+
+
+/* Inline editor rows */
+.editrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.editrow input{flex:1;min-width:120px}
+.lactions{display:flex;gap:8px;align-items:center}
+
+
+/* v5 helpers */
+.row.between{ justify-content: space-between; align-items: center; }
+.pill.small{ font-size: 12px; padding: 3px 8px; border-radius: 999px; }
+
+
+
+/* Alphabet group headers */
+.groupHead{
+  margin: 12px 0 6px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 
-select,input{
-  background:#0c141d;
-  border:1px solid #223247;
-  border-radius:12px;
-  padding:10px;
-  color:white;
-  width:100%;
+
+/* Drinks layout */
+/* Make native controls (select/number steppers) readable on dark UI */
+input, select{
   color-scheme: dark;
 }
-
-input[type=number]::-webkit-inner-spin-button{
-  filter:invert(1);
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button{
+  filter: invert(1);
+  opacity: 0.9;
 }
 
-.cell{
+
+/* Drinks spacing tweak: widen Amount so kcal/carbs align nicely */
+#drinkRows .trow,
+.table.drinks .thead{
+  grid-template-columns: 1.5fr .9fr 1.1fr .7fr .7fr .35fr;
+}
+
+#drinkRows .cell.right{
   text-align:right;
   padding-right:6px;
-}
-
-.actions{
-  display:flex;
-  gap:12px;
-  margin-top:16px;
-}
-
-button{
-  flex:1;
-  padding:14px;
-  border-radius:14px;
-  border:none;
-  font-size:16px;
-  font-weight:700;
-  background:#1e2c3f;
-  color:white;
-}
-
-button.danger{
-  background:#3a1a22;
 }
