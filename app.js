@@ -829,11 +829,14 @@ function renderDrinkRows() {
     amt.value = (row.amount ?? "") !== "" ? String(row.amount) : "";
     amt.dataset.kind = "amount";
     amt.dataset.idx = String(idx);
+    amt.style.textAlign = "left";
+    amt.style.paddingRight = "14px";
 
     
-    // iOS Safari doesn't show native number spinners. Add tiny +/- steppers (shown on iOS only via CSS).
+    // iOS Safari doesn't show native number spinners. For mL we keep full-width input;
+    // for Qty units we add tiny +/- steppers (shown on iOS only via CSS).
     const amtWrap = document.createElement("div");
-    amtWrap.className = "amtWrap";
+    amtWrap.className = unit.value === "ml" ? "amtWrap mlOnly" : "amtWrap withSteps";
 
     const btnMinus = document.createElement("button");
     btnMinus.type = "button";
@@ -845,12 +848,16 @@ function renderDrinkRows() {
     btnPlus.className = "amtStep amtPlus";
     btnPlus.textContent = "+";
 
-    // Put input in the middle
-    amtWrap.appendChild(btnMinus);
-    amtWrap.appendChild(amt);
-    amtWrap.appendChild(btnPlus);
-
-    const bump = (delta) => {
+    if (unit.value === "ml") {
+      // Full-width input so you can see 3-4 digits easily
+      amtWrap.appendChild(amt);
+    } else {
+      // Qty: step buttons
+      amtWrap.appendChild(btnMinus);
+      amtWrap.appendChild(amt);
+      amtWrap.appendChild(btnPlus);
+    }
+const bump = (delta) => {
       const cur = Number(amt.value || 0);
       const next = Math.max(0, cur + delta);
       amt.value = String(next);
@@ -882,8 +889,10 @@ const kcal = document.createElement("div");
     unit.addEventListener("change", () => {
       amt.placeholder = unit.value === "ml" ? "mL" : "Qty";
       onDrinkRowChanged({ target: unit });
+      // Re-render to swap between full-width mL input and +/- qty steppers on iOS
+      renderDrinkRows();
     });
-    amt.addEventListener("input", onDrinkRowChanged);
+amt.addEventListener("input", onDrinkRowChanged);
     amt.addEventListener("change", onDrinkRowChanged);
     amt.addEventListener("blur", onDrinkRowChanged);
 

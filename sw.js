@@ -1,4 +1,4 @@
-const CACHE = "carnivore-v14-20260201-152322-l16ich";
+const CACHE = "carnivore-v15-20260201-153013-cbc2zx";
 const ASSETS = [
   "./",
   "./index.html",

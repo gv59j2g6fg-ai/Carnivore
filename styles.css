@@ -386,3 +386,17 @@ input[type="number"]::-webkit-outer-spin-button{
     margin: 0;
   }
 }
+
+
+/* === V15: mL full-width input, steppers only for Qty units on iOS (Build: v15-20260201-153013-cbc2zx) === */
+.amtWrap.mlOnly { gap: 0; }
+.amtWrap.mlOnly input { width: 100%; text-align: left; padding-left: 14px; }
+
+/* If steps are present, keep input centered */
+.amtWrap.withSteps input { text-align: center; }
+
+/* iOS: show step buttons only when wrapper has withSteps */
+@supports (-webkit-touch-callout: none) {
+  .amtWrap.mlOnly .amtStep { display: none !important; }
+  .amtWrap.withSteps .amtStep { display: inline-grid; }
+}
